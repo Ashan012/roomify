@@ -2,6 +2,7 @@ import type { Route } from "./+types/home";
 import NavBar from "../../components/NavBar";
 import { ArrowRight, ArrowUp, Clock, Layers } from "lucide-react";
 import Button from "components/ui/Button";
+import Upload from "components/ui/Upload";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -50,7 +51,7 @@ export default function Home() {
               <p>Supports JPG,PNG formats up to 10MB </p>
             </div>
 
-            <p>upload images</p>
+            <Upload />
           </div>
         </div>
       </section>

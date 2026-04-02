@@ -20,7 +20,7 @@ export const createProject = async ({
   visibility = "private",
 }: CreateProjectParams): Promise<DesignItem | null | undefined> => {
   if (!PUTER_WORKER_URL) {
-    console.warn("Missing VITE PUTER WORKER URL");
+    console.warn("Missing VITE_PUTER_WORKER_URL; skip history fetch;");
     return null;
   }
   const projectId = item.id;
@@ -40,7 +40,7 @@ export const createProject = async ({
     projectId && item.renderedImage
       ? await uploadImageToHosting({
           hosting,
-          url: item.renderedImage as string,
+          url: item.renderedImage,
           projectId,
           label: "rendered",
         })
@@ -51,7 +51,7 @@ export const createProject = async ({
     (isHostedUrl(item.sourceImage) ? item.sourceImage : "");
 
   if (!resolvedSource) {
-    console.warn("failed to host source image skipping save");
+    console.warn("Failed to host source image, skipping save.");
     return null;
   }
 
@@ -71,7 +71,7 @@ export const createProject = async ({
   const payload = {
     ...rest,
     sourceImage: resolvedSource,
-    publicPath: resolvedRender,
+    renderedImage: resolvedRender,
   };
 
   try {
@@ -79,28 +79,26 @@ export const createProject = async ({
       `${PUTER_WORKER_URL}/api/projects/save`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          body: JSON.stringify({
-            project: payload,
-            visibility,
-          }),
-        },
+        body: JSON.stringify({
+          project: payload,
+          visibility,
+        }),
       },
     );
 
     if (!response.ok) {
-      console.error("failed to save project", await response.text());
+      console.error("failed to save the project", await response.text());
       return null;
     }
+
     const data = (await response.json()) as { project?: DesignItem | null };
+    console.log(data);
     return data?.project ?? null;
-  } catch (error) {
-    console.log("failed to save project", error);
+  } catch (e) {
+    console.log("Failed to save project", e);
     return null;
   }
 };
-
 export const getProject = async () => {
   if (!PUTER_WORKER_URL) {
     console.warn("Missing puter worker url");
@@ -117,6 +115,7 @@ export const getProject = async () => {
       return [];
     }
     const data = (await response.json()) as { projects?: DesignItem[] | null };
+    console.log(data);
     return Array.isArray(data?.projects) ? data?.projects : [];
   } catch (error) {
     console.error("failed to get project", error);

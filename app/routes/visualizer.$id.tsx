@@ -102,7 +102,7 @@ function Visualizer() {
     }
 
     hasInitialGenerated.current = true;
-    void runGeneration(project);
+    void runGenration(project);
   }, [project, isProjectLoading]);
 
   return (
@@ -122,7 +122,7 @@ function Visualizer() {
           <div className="panel-header">
             <div className="panel-meta">
               <p>Project</p>
-              <h2>{"Untitled Project"}</h2>
+              <h2>{project?.name || `Residence ${id}`}</h2>
               <p className="note">Created by You</p>
             </div>
 
@@ -147,9 +147,9 @@ function Visualizer() {
               />
             ) : (
               <div className="render-placeholder">
-                {initialImage && (
+                {project?.sourceImage && (
                   <img
-                    src={initialImage}
+                    src={project?.sourceImage}
                     alt="orignal"
                     className="render-fallback"
                   />

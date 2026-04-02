@@ -4,8 +4,8 @@ import { ArrowRight, ArrowUp, Clock, Layers } from "lucide-react";
 import Button from "components/ui/Button";
 import Upload from "components/ui/Upload";
 import { useNavigate } from "react-router";
-import { useRef, useState } from "react";
-import { createProject } from "lib/puter.action";
+import { useEffect, useRef, useState } from "react";
+import { createProject, getProject } from "lib/puter.action";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -58,6 +58,14 @@ export default function Home() {
       isCreatingProjectRef.current = false;
     }
   };
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      let item = await getProject();
+      setProjects(item!);
+    };
+    fetchProject();
+  }, []);
   return (
     <div className="home">
       <NavBar />
